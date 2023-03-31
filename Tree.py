@@ -84,7 +84,7 @@ class Cell_Tree:
         
         self.N_grid = N_grid
         ### table to track if cells have been added in the tree
-        self.is_cell_in = np.zeros( self.N_grid**2, dtype=bool ) 
+        self.__is_cell_in = np.zeros( self.N_grid**2, dtype=bool )
         
         ### First, init the START, OUT and CHEST cells
         self.__ID_cell_START = None ### store special cell ID for easy acces
@@ -94,7 +94,7 @@ class Cell_Tree:
         
         ### init the first cell (head of the tree) = the START cell
         self.head = Cell(self.__ID_cell_START, N_grid)
-        self.is_cell_in[self.ID_cell_START] = True 
+        self.__is_cell_in[self.__ID_cell_START] = True 
         
         ### init the first layer
         ### layers represent the distance from the head (each layer has a different number of cells)
@@ -108,8 +108,8 @@ class Cell_Tree:
                 
         ### Finish to init the special cells
         self.cell_START = self.head
-        self.cell_OUT   = self.get_cell( self.ID_cell_OUT )
-        self.cell_CHEST = self.get_cell( self.ID_cell_CHEST )
+        self.cell_OUT   = self.get_cell( self.__ID_cell_OUT )
+        self.cell_CHEST = self.get_cell( self.__ID_cell_CHEST )
         self.cell_START.is_START = True
         self.cell_OUT.is_OUT     = True
         self.cell_CHEST.is_CHEST = True
@@ -151,7 +151,7 @@ class Cell_Tree:
         ### NOTE : one cell can be the next of several other cells 
         
         ### check if the chain is complete
-        if self.is_cell_in.sum()==self.N_grid**2 :
+        if self.__is_cell_in.sum()==self.N_grid**2 :
             return 0
         else:
             ### add, init a new layer
@@ -162,7 +162,7 @@ class Cell_Tree:
                 for voisine_ID in current_cell_in_layer.voisines_ID:
                     
                     ### check if cell_voisine is already in the tree
-                    if self.is_cell_in[voisine_ID] :    
+                    if self.__is_cell_in[voisine_ID] :    
                         cell_voisine = self.get_cell(voisine_ID)
                         
                         ### if cell_voisine is above then go next voisine 
@@ -175,21 +175,21 @@ class Cell_Tree:
                             
                     else: ### if cell_voisine is not in the tree 
                         cell_voisine = Cell( voisine_ID, self.N_grid )
-                        self.is_cell_in[voisine_ID] = True 
+                        self.__is_cell_in[voisine_ID] = True 
                         current_cell_in_layer.next.append( cell_voisine ) ### cell voisine added to the curent cell next
                         self.layers[ self.N_layer-1 ].append( cell_voisine ) ### cell voisine added to the next layers
                         cell_voisine.layer_ID = self.N_layer
                     
             ### generate the next layer from the layer just build previously, until all cells are in the tree
-            self._generate_chain( self.layers[ self.N_layer-1 ] )
+            self.__generate_chain( self.layers[ self.N_layer-1 ] )
         
     def reset_tree(self):
         """
         Clean the maze by removing all the Walls
         NOTE that the special cells (START, OUT and CHEST) are not modified
         """
-        self.is_cell_in = np.zeros( self.N_grid**2, dtype=bool )
-        self.is_cell_in[self.ID_cell_START] = True
+        self.__is_cell_in = np.zeros( self.N_grid**2, dtype=bool )
+        self.__is_cell_in[self.__ID_cell_START] = True
         self.N_layer = 1
         self.layers = [[self.head]]
         self.__generate_chain( self.layers[0] )
@@ -229,16 +229,16 @@ class Cell_Tree:
 ### Walls can be through ID (1D) or from two neighbor cells IDs (ID1,ID2) 
 ###------------------------------------------------------------### 
         
-    def build_WALL_between_cells( self, current_cell_ID, next_cell_ID ):
+    def build_WALL( self, Wall_ID ):
         """
         Remove a cell from the list of next cells
         It represent a "WALL CONSTRUCTION"
-        
-        Two neighbors cell are needed : current_cell_ID, next_cell_ID
-        The order does not matter
         """
+        
+        current_cell_ID, next_cell_ID = self.__from_WallID_to_CellID( Wall_ID )
         ### The order of cells is automatically chosen below
         ### it is important because the tree is "one-way"->"going down"
+        
         current_cell = self.get_cell( current_cell_ID )
         next_cell = self.get_cell( next_cell_ID )
      
@@ -247,20 +247,17 @@ class Cell_Tree:
         else:
             next_cell.next.remove( current_cell )
         ### update the wall state
-        Wall_ID = self.__from_CellID_to_WallID( current_cell_ID, next_cell_ID )
         self.Wall_state[Wall_ID] = not(self.Wall_state[Wall_ID]) ### change state of the wall : should be True
-            if not(self.Wall_state[Wall_ID]) :
-                print( '/!\ Wall_state not synchronized (build_WALL_between_cells)')
+        if not(self.Wall_state[Wall_ID]) :
+            print( '/!\ Wall_state not synchronized (build_WALL_between_cells)')
             
             
-    def brake_WALL_between_cells( self, current_cell_ID, next_cell_ID ):
+    def brake_WALL( self, Wall_ID ):
         """
         Add a cell from the list of next cells
         It represent a "WALL DESTRUCTION"
-        
-        Two neighbors cell are needed : current_cell_ID, next_cell_ID
-        The order does not matter
         """
+        current_cell_ID, next_cell_ID = self.__from_WallID_to_CellID( Wall_ID )
         ### The order of cells is automatically chosen below
         ### it is important because the tree is "one-way"->"going down"
         current_cell = self.get_cell( current_cell_ID )
@@ -271,10 +268,9 @@ class Cell_Tree:
         else:
             next_cell.next.append( current_cell )
         ### update the wall state
-        Wall_ID = self.__from_CellID_to_WallID( current_cell_ID, next_cell_ID )
         self.Wall_state[Wall_ID] = not(self.Wall_state[Wall_ID]) ### change state of the wall : should be False
-            if self.Wall_state[Wall_ID] :
-                print( '/!\ Wall_state not synchronized (brake_WALL_between_cells)')
+        if self.Wall_state[Wall_ID] :
+            print( '/!\ Wall_state not synchronized (brake_WALL_between_cells)')
                        
     def __from_WallID_to_CellID( self, Wall_ID ):
         ### Convert the WALL ID into Cells ID
@@ -283,7 +279,7 @@ class Cell_Tree:
         ### The second half is the VERTICAL WALLS, ffrom left to right
 
         if Wall_ID < (self.N_Wall/2) :
-            return Wall_ID, Wall_ID+N_grid
+            return Wall_ID, Wall_ID+self.N_grid
         else: ### for the vertical wall the trik is to switch the X-Y axes
             Wall_ID_tmp = Wall_ID-(self.N_Wall//2)
             Y = Wall_ID_tmp//self.N_grid
@@ -349,7 +345,7 @@ class Cell_Tree:
         count+=1
         ###not realy sure what I am doing here
         ###I have to do that to extract the return the deepest check
-        if not( self.check_if_cell_is_still_accessible( next_next_cells, count=count ) ):
+        if not( self.__check_if_cell_is_still_accessible( next_next_cells, count=count ) ):
             return False
         else:
             return True
