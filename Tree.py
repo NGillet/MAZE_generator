@@ -189,7 +189,11 @@ class Cell_Tree:
         NOTE that the special cells (START, OUT and CHEST) are not modified
         """
         self.__is_cell_in = np.zeros( self.N_grid**2, dtype=bool )
+        
+        self.head = Cell(self.__ID_cell_START, self.N_grid)
         self.__is_cell_in[self.__ID_cell_START] = True
+        self.head.layer_ID = 1
+        
         self.N_layer = 1
         self.layers = [[self.head]]
         self.__generate_chain( self.layers[0] )
@@ -304,13 +308,13 @@ class Cell_Tree:
 ### path management
 ###------------------------------------------------------------### 
        
-    def check(self):
+    def check(self, verbose=0):
         """
         Check if the OUT cell is accessible from the START cell
         """
-        return self.__check_if_cell_is_still_accessible( self.head.next )
+        return self.__check_if_cell_is_still_accessible( self.head.next, verbose=verbose )
     
-    def __check_if_cell_is_still_accessible( self, next_cells, count=1 ):
+    def __check_if_cell_is_still_accessible( self, next_cells, count=1, verbose=0 ):
         """
         Go from next to next, from START until it find OUT, or reach the bottom
         return a bool True if OUT is found
@@ -320,6 +324,8 @@ class Cell_Tree:
         
         count : count the number of time it get into the recursive loop^: for debug
         """
+        
+        if verbose : print( next_cells ) 
     
         next_next_cells = []
         next_next_cells_IDs = []
@@ -412,7 +418,7 @@ class Cell_Tree:
             Wall_ID_tmp = Wall_ID-(self.N_Wall//2)
             Y = Wall_ID_tmp//self.N_grid
             X = (Wall_ID_tmp-Y*self.N_grid)
-            Wall_ID_tmp_2 = Y + X*N_grid ### new ID from switched axes
+            Wall_ID_tmp_2 = Y + X*self.N_grid ### new ID from switched axes
             Y = Wall_ID_tmp_2//self.N_grid
             X = (Wall_ID_tmp_2-Y*self.N_grid)
             return [X+0.5,X+0.5], [Y-0.5,Y+0.5]
