@@ -1,3 +1,6 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
 class Agent():
     def __init__(self, tree):  ### tree en input ?
         
@@ -58,7 +61,7 @@ class Agent():
                 next_state, reward, done = self.__step( action, current_state)
 
                 # We update our Q-table using the Q-learning iteration
-                self.Q_table[current_state, action] = (1-self.lr)*self.Q_table[current_state, action] + self.lr*(reward + self.discount*max(self.Q_table[next_state,:]))
+                self.Q_table[current_state, action] += (1-self.lr)*self.Q_table[current_state, action] + self.lr*(reward + self.discount*max(self.Q_table[next_state,:]))
 
                 total_episode_reward = total_episode_reward + reward
                 # If the episode is finished, we leave the for loop

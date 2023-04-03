@@ -37,6 +37,7 @@ class Cell:
         
         ### init for the tree structure
         self.next = []
+        self.previous = []
         self.layer_ID = None
         
     def __get_voisines_ID(self):
@@ -172,6 +173,7 @@ class Cell_Tree:
                             ### cell voisine added to the curent cell next
                             current_cell_in_layer.next.append( cell_voisine ) 
                             ### but cell_voisine is not added AGAIN on the layer 
+                            cell_voisine.previous.append( current_cell_in_layer )
                             
                     else: ### if cell_voisine is not in the tree 
                         cell_voisine = Cell( voisine_ID, self.N_grid )
@@ -179,13 +181,16 @@ class Cell_Tree:
                         current_cell_in_layer.next.append( cell_voisine ) ### cell voisine added to the curent cell next
                         self.layers[ self.N_layer-1 ].append( cell_voisine ) ### cell voisine added to the next layers
                         cell_voisine.layer_ID = self.N_layer
+                        cell_voisine.previous.append( current_cell_in_layer )
                     
             ### generate the next layer from the layer just build previously, until all cells are in the tree
             self.__generate_chain( self.layers[ self.N_layer-1 ] )
         
     def reset_tree(self):
         """
-        Clean the maze by removing all the Walls
+        Clean the maze 
+        by rebuilding all cells
+        by removing all the Walls
         NOTE that the special cells (START, OUT and CHEST) are not modified
         """
         self.__is_cell_in = np.zeros( self.N_grid**2, dtype=bool )
@@ -197,6 +202,14 @@ class Cell_Tree:
         self.N_layer = 1
         self.layers = [[self.head]]
         self.__generate_chain( self.layers[0] )
+        
+        self.cell_START = self.head
+        self.cell_OUT   = self.get_cell( self.__ID_cell_OUT )
+        self.cell_CHEST = self.get_cell( self.__ID_cell_CHEST )
+        self.cell_START.is_START = True
+        self.cell_OUT.is_OUT     = True
+        self.cell_CHEST.is_CHEST = True
+        
         self.Wall_state = np.zeros( self.N_Wall, dtype=bool )
         
     def get_cell( self, ID ):
@@ -312,9 +325,10 @@ class Cell_Tree:
         """
         Check if the OUT cell is accessible from the START cell
         """
-        return self.__check_if_cell_is_still_accessible( self.head.next, verbose=verbose )
+        is_cell_checked = np.zeros( self.N_grid**2, dtype=bool )
+        return self.__check_if_cell_is_still_accessible( self.head.next, is_cell_checked, verbose=verbose )
     
-    def __check_if_cell_is_still_accessible( self, next_cells, count=1, verbose=0 ):
+    def __check_if_cell_is_still_accessible( self, next_cells, is_cell_checked, count=1, verbose=0 ):
         """
         Go from next to next, from START until it find OUT, or reach the bottom
         return a bool True if OUT is found
@@ -325,18 +339,34 @@ class Cell_Tree:
         count : count the number of time it get into the recursive loop^: for debug
         """
         
-        if verbose : print( next_cells ) 
+        if verbose : 
+            print( 'Count : ', count )  
+            print( 'Cell already check : ', np.where(is_cell_checked)[0] )  
+            for cell in next_cells:
+                print( cell.ID ) 
     
         next_next_cells = []
         next_next_cells_IDs = []
 
+        ### loop to gather all the next next cells
         for cell in next_cells:
             if cell.is_OUT: ### OUT is found
                 return True
+            #print('la',cell.next)
             
-            next_next_cells.append( cell.next )
-            for cell_next in cell.next:
-                next_next_cells_IDs.append( [cell_next.ID] )
+            #print( cell.next, cell.previous )
+            
+            ### if their are no next cells, we have to look at the preivious one
+            if (cell.next==[]) or (is_cell_checked[cell.next[0].ID]) : 
+                for cell_previous in cell.previous: ### check is the previous cell is already in the next_cells table 
+                    if not(is_cell_checked[cell_previous.ID]):
+                        next_next_cells.append( [cell_previous] )
+                        next_next_cells_IDs.append( [cell_previous.ID] )
+            else : 
+                for cell_next in cell.next:
+                    if not(is_cell_checked[cell_next.ID]):
+                        next_next_cells.append( [cell_next] )
+                        next_next_cells_IDs.append( [cell_next.ID] )
                 
         next_next_cells = np.array( [item for sublist in next_next_cells for item in sublist] )
         next_next_cells_IDs = [item for sublist in next_next_cells_IDs for item in sublist]
@@ -344,6 +374,9 @@ class Cell_Tree:
         if next_next_cells_IDs==[]: ### the bottom of the tree is reach
             return False
 
+        for cell in next_cells:
+            is_cell_checked[cell.ID] = True  
+        
         ### The list of next_next have to be cleaned from multiple occurences
         next_next_cells_IDs, ID_i_sorted = np.unique(next_next_cells_IDs, return_index=True)
         next_next_cells = next_next_cells[ID_i_sorted]
@@ -351,7 +384,7 @@ class Cell_Tree:
         count+=1
         ###not realy sure what I am doing here
         ###I have to do that to extract the return the deepest check
-        if not( self.__check_if_cell_is_still_accessible( next_next_cells, count=count ) ):
+        if not( self.__check_if_cell_is_still_accessible( next_next_cells, is_cell_checked, count=count, verbose=verbose ) ):
             return False
         else:
             return True
