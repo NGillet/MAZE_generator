@@ -261,8 +261,10 @@ class Cell_Tree:
      
         if current_cell.layer_ID < next_cell.layer_ID:
             current_cell.next.remove( next_cell )
+            next_cell.previous.remove( current_cell )
         else:
             next_cell.next.remove( current_cell )
+            current_cell.previous.remove( next_cell )
         ### update the wall state
         self.Wall_state[Wall_ID] = not(self.Wall_state[Wall_ID]) ### change state of the wall : should be True
         if not(self.Wall_state[Wall_ID]) :
@@ -275,15 +277,16 @@ class Cell_Tree:
         It represent a "WALL DESTRUCTION"
         """
         current_cell_ID, next_cell_ID = self.__from_WallID_to_CellID( Wall_ID )
-        ### The order of cells is automatically chosen below
-        ### it is important because the tree is "one-way"->"going down"
+        
         current_cell = self.get_cell( current_cell_ID )
         next_cell = self.get_cell( next_cell_ID )
         
         if current_cell.layer_ID < next_cell.layer_ID:
             current_cell.next.append( next_cell )
+            next_cell.previous.append( current_cell )
         else:
             next_cell.next.append( current_cell )
+            current_cell.previous.append( next_cell )
         ### update the wall state
         self.Wall_state[Wall_ID] = not(self.Wall_state[Wall_ID]) ### change state of the wall : should be False
         if self.Wall_state[Wall_ID] :
@@ -317,6 +320,17 @@ class Cell_Tree:
             X = (min_ID-Y*self.N_grid)
             return Y+X*self.N_grid + (self.N_Wall//2)
         
+    def random_maze(self):
+        
+        self.reset_tree()
+        
+        self.Wall_state = np.zeros( self.N_Wall, dtype=bool )
+        
+        Wall_to_build = np.random.randint(0,2,self.N_Wall).astype(bool)
+        
+        for Wall_ID, is_to_build in enumerate(Wall_to_build):
+            if( is_to_build ) : self.build_WALL( Wall_ID )
+            
 ###------------------------------------------------------------### 
 ### path management
 ###------------------------------------------------------------### 
@@ -326,9 +340,10 @@ class Cell_Tree:
         Check if the OUT cell is accessible from the START cell
         """
         is_cell_checked = np.zeros( self.N_grid**2, dtype=bool )
-        return self.__check_if_cell_is_still_accessible( self.head.next, is_cell_checked, verbose=verbose )
+        is_cell_checked[self.head.ID]=True
+        return self.__check_if_cell_is_still_accessible( self.head.next, is_cell_checked, target_cell='is_OUT', verbose=verbose )
     
-    def __check_if_cell_is_still_accessible( self, next_cells, is_cell_checked, count=1, verbose=0 ):
+    def __check_if_cell_is_still_accessible( self, next_cells, is_cell_checked, target_cell='is_OUT', count=1, verbose=0 ):
         """
         Go from next to next, from START until it find OUT, or reach the bottom
         return a bool True if OUT is found
@@ -349,19 +364,23 @@ class Cell_Tree:
         next_next_cells_IDs = []
 
         ### loop to gather all the next next cells
+        
+        #getattr(tree.head,'is_OUT')
+        
         for cell in next_cells:
-            if cell.is_OUT: ### OUT is found
+            if getattr(cell,target_cell): ### OUT is found
                 return True
             #print('la',cell.next)
             
             #print( cell.next, cell.previous )
             
             ### if their are no next cells, we have to look at the preivious one
-            if (cell.next==[]) or (is_cell_checked[cell.next[0].ID]) : 
-                for cell_previous in cell.previous: ### check is the previous cell is already in the next_cells table 
-                    if not(is_cell_checked[cell_previous.ID]):
-                        next_next_cells.append( [cell_previous] )
-                        next_next_cells_IDs.append( [cell_previous.ID] )
+            #if (cell.next==[]) or (is_cell_checked[cell.next[0].ID]) : 
+            ### if a previous not already checked
+            for cell_previous in cell.previous: ### check is the previous cell is already in the next_cells table 
+                if not(is_cell_checked[cell_previous.ID]):
+                    next_next_cells.append( [cell_previous] )
+                    next_next_cells_IDs.append( [cell_previous.ID] )
             else : 
                 for cell_next in cell.next:
                     if not(is_cell_checked[cell_next.ID]):
@@ -384,7 +403,7 @@ class Cell_Tree:
         count+=1
         ###not realy sure what I am doing here
         ###I have to do that to extract the return the deepest check
-        if not( self.__check_if_cell_is_still_accessible( next_next_cells, is_cell_checked, count=count, verbose=verbose ) ):
+        if not( self.__check_if_cell_is_still_accessible( next_next_cells, is_cell_checked, target_cell=target_cell, count=count, verbose=verbose ) ):
             return False
         else:
             return True
