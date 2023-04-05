@@ -1,7 +1,9 @@
 # MAZE_generator
  a Maze generator with Q-Learning
 
-# How to use
+# Usage
+
+## Examples
 
 # Algorythm
 This section will describ the algorythm choises made. 
