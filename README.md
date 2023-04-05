@@ -17,6 +17,17 @@ I assume that a 'do-able **nice** Maze' is :
 - any doable grid
 - a grid with a minimum of walls, but not too much (one way maze...). So maximize the number of walls up to half the total number of wall possible seems a good esthetical compromise.
 
+## Maze management
+
+### The tree
+
+## Q-learning management
+
+### Actions
+
+### States
+
+### Rewards
 
 
 # Architecture
