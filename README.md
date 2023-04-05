@@ -1,2 +1,2 @@
 # MAZE_generator
- Maze generator with Q-Learning
+ a Maze generator with Q-Learning
