@@ -28,9 +28,12 @@ To construct those functions, I describe the grid of the maze as a tree of linke
 
 ### The tree
 
+The grid is composed of cells, cells have neighbors, the transition between cells is a wall, the wall can be build (up, true...) or not (down, false...).
 
 ![schéma](https://user-images.githubusercontent.com/12394419/230088934-7f523f33-c527-4a8c-add2-b5b5833351f9.png)
 *Fig 1 : on the left : a 4x4 grid with cells and walls IDs. On the right : the tree associate to the grid. NOTE : the shape of the tree change with the START cell.*
+
+The tree is compose of layers, each layer is a list of cells. The tree is build recursivelly from the first layer, which contain only the starting cell. Then each layer is build from the neighbors cells of the previous layer, **that are not already in the tree** (to avoid infinit loop).
 
 
 
