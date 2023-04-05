@@ -258,7 +258,7 @@ class Cell_Tree:
         
         current_cell = self.get_cell( current_cell_ID )
         next_cell = self.get_cell( next_cell_ID )
-     
+        
         if current_cell.layer_ID < next_cell.layer_ID:
             current_cell.next.remove( next_cell )
             next_cell.previous.remove( current_cell )
@@ -339,9 +339,14 @@ class Cell_Tree:
         """
         Check if the OUT cell is accessible from the START cell
         """
+        check = True
         is_cell_checked = np.zeros( self.N_grid**2, dtype=bool )
         is_cell_checked[self.head.ID]=True
-        return self.__check_if_cell_is_still_accessible( self.head.next, is_cell_checked, target_cell='is_OUT', verbose=verbose )
+        check *= self.__check_if_cell_is_still_accessible( self.head.next, is_cell_checked, target_cell='is_OUT', verbose=verbose )
+        is_cell_checked = np.zeros( self.N_grid**2, dtype=bool )
+        is_cell_checked[self.head.ID]=True
+        check *= self.__check_if_cell_is_still_accessible( self.head.next, is_cell_checked, target_cell='is_CHEST', verbose=verbose )
+        return bool(check)
     
     def __check_if_cell_is_still_accessible( self, next_cells, is_cell_checked, target_cell='is_OUT', count=1, verbose=0 ):
         """
@@ -439,9 +444,9 @@ class Cell_Tree:
             fig, axes = plt.subplots()
         else:
             fig, axes = figAndAxes
-        axes.text( self.cell_START.X, self.cell_START.Y, 'START', c='r' )
-        axes.text( self.cell_OUT.X  , self.cell_OUT.Y  , 'OUT'  , c='r' )
-        axes.text( self.cell_CHEST.X, self.cell_CHEST.Y, 'CHEST', c='r' )
+        axes.text( self.cell_START.X-0.2, self.cell_START.Y, 'START', c='r' )
+        axes.text( self.cell_OUT.X-0.2, self.cell_OUT.Y  , 'OUT'  , c='r' )
+        axes.text( self.cell_CHEST.X-0.2, self.cell_CHEST.Y, 'CHEST', c='r' )
 
         return fig, axes
     
@@ -452,11 +457,11 @@ class Cell_Tree:
             fig, axes = figAndAxes
         Wall_to_Draw = np.where( self.Wall_state )[0]    
         for Wall_ID in Wall_to_Draw:
-            Xs, Ys = self.from_WallID_to_plot( Wall_ID ) 
+            Xs, Ys = self._from_WallID_to_plot( Wall_ID ) 
             axes.plot( Xs, Ys, 'k' )
         return figAndAxes
     
-    def from_WallID_to_plot(self, Wall_ID ):
+    def _from_WallID_to_plot(self, Wall_ID ):
         ### Convert the WALL ID into plot coordinates
 
         ### The first half is the HORIZONTAL WALLS, from top to bottom
