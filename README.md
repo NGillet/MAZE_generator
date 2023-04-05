@@ -61,9 +61,28 @@ I defined three rewards :
 
 The rewards (1) and (2) are adversarial, by adjusting the value of the reward we could build **nice doable maze**. 
 
+### Hyper-parameters
+There are other parameters that have to defined : 
+- learning rate : 
+- discount : 
+- exploration/exploitation exponential decay : 
+
 # Architecture
  The code is based on 2 main class : 
  - One to manage the maze's grid and walls : Tree.py
  - One to manage the Q-learning : Agent.py
 
 ## Tree.py
+Contain 2 class : 
+- `class Cell:` represent a cell of the grid, it contain its position (1D and 2D) and the list of neighbors, next and previous cells. Note that the next and previous list are only defined and usefull in the tree structure.
+- `class Cell_Tree:` represent the grid : 
+    - it create the special cells : START, EXIT and CHEST
+    - it generate the tree recursivelly
+    - it has function to build or brake walls
+    - it has function to check if the maze is doable
+
+## Agent.py
+Contain one class :
+- `class Agent(tree):` it take a tree in input, and permit to manage the agent for the Q-learning and generate a maze. It has two main functions :
+    - `def train():` train the agent to build a **nice doable maze**
+    - `def generate():` generate the maze from the Q-value matrix (after training)
