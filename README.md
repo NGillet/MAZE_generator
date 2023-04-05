@@ -19,6 +19,8 @@ I assume that a 'do-able **nice** Maze' is :
 
 ## Maze management
 
+![schéma](https://user-images.githubusercontent.com/12394419/230088934-7f523f33-c527-4a8c-add2-b5b5833351f9.png)
+
 ### The tree
 
 ## Q-learning management
@@ -33,6 +35,7 @@ I assume that a 'do-able **nice** Maze' is :
 # Architecture
  The code is based on 2 main class : 
  - One to manage the maze's grid and walls : Tree.py
+ 
  - One to manage the Q-learning : Agent.py
 
 ## Tree.py
