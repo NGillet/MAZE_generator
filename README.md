@@ -62,7 +62,6 @@ The rewards (1) and (2) are adversarial, by adjusting the value of the reward we
 # Architecture
  The code is based on 2 main class : 
  - One to manage the maze's grid and walls : Tree.py
- 
  - One to manage the Q-learning : Agent.py
 
 ## Tree.py
