@@ -42,12 +42,22 @@ The tree structure permits to 'build wall' by removing a cell in the 'next' and 
 
 ## Q-learning management
 
+This section is not maint to explain the Q-learning algorythm, but to explain the choise made. 
+The three main parameters to setup are the actions possible of the agent, the states of the grid and rewards.
+
 ### Actions
+The actions are 'build one of wall' and 'stop building' (the maze is done). Therefore the number of action is equal to number of wall plus one.
 
 ### States
+The states are the current number of walls on the grid. Therefore the number of wall is also equal to number of wall plus one (from 0 wall to all wall build).
 
 ### Rewards
+I defined three rewards : 
+1. Reward for finishing a doable maze : it encourage the agent to stop building wall while the maze is doable
+2. Reward for building walls : it encourage the agent to build walls
+3. Penality for building a wall that brake the maze
 
+The rewards (1) and (2) are adversarial, by adjusting the value of the reward we could build **nice doable maze**. 
 
 # Architecture
  The code is based on 2 main class : 
