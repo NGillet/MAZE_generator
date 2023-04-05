@@ -30,12 +30,13 @@ To construct those functions, I describe the grid of the maze as a tree of linke
 
 The grid is composed of cells, cells have neighbors, the transition between cells is a wall, the wall can be build (up, true...) or not (down, false...).
 
-![schéma](https://user-images.githubusercontent.com/12394419/230088934-7f523f33-c527-4a8c-add2-b5b5833351f9.png)
+![schéma](https://user-images.githubusercontent.com/12394419/230098839-f8318f27-3fee-49e6-851c-7aa4c66a78e3.png)
 *Fig 1 : on the left : a 4x4 grid with cells and walls IDs. On the right : the tree associate to the grid. NOTE : the shape of the tree change with the START cell.*
 
-The tree is compose of layers, each layer is a list of cells. The tree is build recursivelly from the first layer, which contain only the starting cell. Then each layer is build from the neighbors cells of the previous layer, **that are not already in the tree** (to avoid infinit loop). Each cell store the next cells and its previous cells. 
+The tree is compose of layers, each layer is a list of cells. The tree is build recursivelly from the first layer, which contain only the starting cell. Then each layer is build from the neighbors cells of the previous layer, **for cells 
+that are not already in the tree** (to avoid infinit loop). Each cell store the next cells and its previous cells. 
 
-The tree structure permits to 'build wall' by removing a cell in the 'next' and 'prvious' list. By going from cell to 'next' and 'previous' it is possible to check if the EXIT and CHEST cells are connected to the start cell. 
+The tree structure permits to 'build wall' by removing a cell in the 'next' and 'previous' list. By going from cell to 'next' and 'previous' it is possible to check if the EXIT and CHEST cells are connected to the start cell. 
 
 
 
