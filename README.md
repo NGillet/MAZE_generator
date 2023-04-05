@@ -20,6 +20,7 @@ I assume that a 'do-able **nice** Maze' is :
 ## Maze management
 
 ![schéma](https://user-images.githubusercontent.com/12394419/230088934-7f523f33-c527-4a8c-add2-b5b5833351f9.png)
+*Fig 1 : on the left : a 4x4 grid with cells and walls IDs. On the right : the tree associate to the grid. NOTE : the shape of the tree change with the START cell.*
 
 ### The tree
 
