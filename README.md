@@ -33,7 +33,9 @@ The grid is composed of cells, cells have neighbors, the transition between cell
 ![schéma](https://user-images.githubusercontent.com/12394419/230088934-7f523f33-c527-4a8c-add2-b5b5833351f9.png)
 *Fig 1 : on the left : a 4x4 grid with cells and walls IDs. On the right : the tree associate to the grid. NOTE : the shape of the tree change with the START cell.*
 
-The tree is compose of layers, each layer is a list of cells. The tree is build recursivelly from the first layer, which contain only the starting cell. Then each layer is build from the neighbors cells of the previous layer, **that are not already in the tree** (to avoid infinit loop).
+The tree is compose of layers, each layer is a list of cells. The tree is build recursivelly from the first layer, which contain only the starting cell. Then each layer is build from the neighbors cells of the previous layer, **that are not already in the tree** (to avoid infinit loop). Each cell store the next cells and its previous cells. 
+
+The tree structure permits to 'build wall' by removing a cell in the 'next' and 'prvious' list. By going from cell to 'next' and 'previous' it is possible to check if the EXIT and CHEST cells are connected to the start cell. 
 
 
 
