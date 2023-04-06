@@ -1,8 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from tqdm.auto import tqdm ### just for a nice loading bar 
+
 class Agent():
-    def __init__(self, tree):  ### tree en input ?
+    def __init__(self, tree, N_episodes=500, exploration_decreasing_decay=0.01):  ### tree en input ?
         
         self.tree = tree ### the grid structure
     
@@ -15,10 +17,10 @@ class Agent():
         self.N_max_action = self.N_action*2
         ### Exploration
         self.exploration_proba = 1 ### init of the proba
-        self.exploration_decreasing_decay = 0.0001  ### decreasing decay for exponential decreasing
+        self.exploration_decreasing_decay = exploration_decreasing_decay  ### decreasing decay for exponential decreasing
         self.min_exploration_proba = 0.01 ### Minimum of exploration proba
 
-        if 1: self.N_episodes = 10000
+        if 1: self.N_episodes = N_episodes
         else : self.N_episodes = np.ceil( np.log( self.min_exploration_proba ) / -self.exploration_decreasing_decay ).astype(int)
         #print( 'N_episodes ',N_episodes )
 
@@ -27,13 +29,15 @@ class Agent():
 
         ### Metrics
         self.total_rewards_episode = np.zeros( self.N_episodes )
+        self.total_QV_episode = np.zeros( self.N_episodes )
                   
-    def train(self, from_random=False, verbose=True):
+    def train(self, from_random=False, verbose=True, disable_tdqm=False):
         ### we iterate over episodes
-        for e in range(self.N_episodes): 
-
-            if not(e%100) and verbose:
-                print( e,'/', self.N_episodes )
+        #for e in range(self.N_episodes): 
+        for e in tqdm(range(self.N_episodes), disable=disable_tdqm): 
+            
+            #if not(e%100) and verbose:
+            #    print( e,'/', self.N_episodes )
 
             ### we initialize the first state of the episode
             self.tree.reset_tree()
@@ -67,6 +71,7 @@ class Agent():
                     self.Q_table =  self.Q_table / np.max( np.abs( self.Q_table ) )
                 
                 total_episode_reward = total_episode_reward + reward
+                
                 # If the episode is finished, we leave the for loop
                 current_state = next_state
                 if done:
@@ -76,6 +81,7 @@ class Agent():
             #We update the exploration proba using exponential decay formula 
             self.exploration_proba = max(self.min_exploration_proba, np.exp(-self.exploration_decreasing_decay*e))
             self.total_rewards_episode[e] = total_episode_reward
+            self.total_QV_episode[e] = np.sum(np.abs(self.Q_table))
             
     def generate(self, from_random=False, print_text=False):
         
