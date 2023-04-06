@@ -132,9 +132,7 @@ Contain one class :
     
 # Discussion
 
-## Optimization
-
-### Additional function
+## Additional function
 
 A function to generate 50 maze and check if they are **nice doable maze** :
 
@@ -153,12 +151,18 @@ The figure above give the 'quality' of the 50 generated maze. We can note 4 maze
 
 Conclusion : Out of 50 trials, 4 failed, 4 were poor quality : so 82% efficiency
 
-### Learning time vs convergence
+## Learning time vs convergence
 during the developement I tryed to optimize some hyper parameters to fasten the leanrning. In the end it is a compromise between optimize the learning time and publish the code.
 
 - `learning rate = 0.1` which might be a bit weak.
 - `discount = 1` which might be too much... to compensate the weak learning rate
 - the couple `N_episodes=500`, `exploration_decreasing_decay=0.01` seems to alow the convergence in most cases tested
 
-### Estimation of the difficulty of the generated maze
+## Estimation of the difficulty of the generated maze
 
+The main estimator of the difficulty of a maze could be : the number of move needed to reach the EXIT (or the CHEST then the EXIT).
+The estimator is not perfect, you can imagine a long hallway... but in **nice doable maze** it is a good estimator
+
+I see two ways to compute the number of needed move : 
+- by using the tree to explore 'all' the ways to the end : this require a 'small' adaptation of the checking function
+- by using Q-learning in a 'classical' way, to explore and solve the maze, then count the number of move in the final way found 
