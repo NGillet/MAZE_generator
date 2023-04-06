@@ -19,6 +19,8 @@ I assume that a 'do-able **nice** Maze' is :
 - any doable grid
 - a grid with a minimum of walls, but not too much (one way maze...). So maximize the number of walls up to half the total number of wall possible seems a good esthetical compromise.
 
+Note : I also assume a square box, which is not in the specification. It does not change fundamentally the algorythm used here. The changment to a rectangular grid is not obvious, because the square grid is hard coded in several formula (in the position of cells and walls especially), but it is doable. 
+
 ## Maze management
 
 Three main fonctions associated to the maze are needed by the generator : 
@@ -66,6 +68,7 @@ There are other parameters that have to defined :
 - learning rate : 
 - discount : 
 - exploration/exploitation exponential decay : 
+- number of iteration :
 
 # Architecture
  The code is based on 2 main class : 
@@ -86,3 +89,19 @@ Contain one class :
 - `class Agent(tree):` it take a tree in input, and permit to manage the agent for the Q-learning and generate a maze. It has two main functions :
     - `def train():` train the agent to build a **nice doable maze**
     - `def generate():` generate the maze from the Q-value matrix (after training)
+    
+    
+# Discussion
+
+## Optimization
+
+### Learning time vs convergence
+during the developement I tryed to optimize some hyper parameters to fasten the leanrning. In the end it is a compromise between optimize the learning time and publish the code.
+
+- `learning rate = 0.1` which might be a bit weak.
+- `discount = 1` which might be too much... to compensate the weak learning rate
+- the couple `N_episodes=500`, `exploration_decreasing_decay=0.01` seems to alow the convergence in most cases tested
+
+### Charge and timing
+
+-
