@@ -3,7 +3,44 @@
 
 # Usage
 
-## Examples
+Python3, numpy, matplotlib and tqdm for 'nice' loading bar (and have a quick estimate of the waiting time). If it does not work you can remove it manually ( in maze_generator.py line 30 and in Agent.py line 37 )
+
+In the next examples sections, the seed of the rng is fixed to 1, so the results should be identical.
+## In command line 
+
+to create a maze of size N_Grid, give the size of the grid in argument :
+
+```console
+> python maze_generator.py 6
+100%|██████████████████████████████████████████████████████████████████████████████████| 500/500 [00:10<00:00, 46.97it/s]
+Maze doable : True
+Wall indicator 96.7%
+```
+![plot1](https://user-images.githubusercontent.com/12394419/230307262-1adc7b06-b81f-40f0-9254-e11dd10f0e9a.png)
+
+*a matplotlib popup plot should appear*
+
+- The loading bar giving the advancement of the training
+- `Maze doable : True` : tell if the maze is doable
+- `Wall indicator 96.7%` : a quick estimate if the maze is 'nice' (100% is half of the walls build)
+
+## As a module 
+
+```console
+>>> import maze_generator as mg
+>>> mg.generate_a_maze( 6, N_episodes=500, exploration_decreasing_decay=0.01, seed=1 )
+```
+It should produce the same result as the previous example. Note that you can change the seed number to produce different maze.
+
+## large maze : 15
+
+```console
+> python maze_generator.py 15
+100%|██████████████████████████████████████████████████████████████████████████████████| 500/500 [05:24<00:00,  1.54it/s]
+Maze doable : True
+Wall indicator 114.3%
+```
+![plot3](https://user-images.githubusercontent.com/12394419/230314484-f4cc3124-5c36-40bc-83ed-1444edb41108.png)
 
 # Algorythm
 This section will describ the algorythm choises made. 
@@ -95,6 +132,25 @@ Contain one class :
 
 ## Optimization
 
+### Additional function
+
+A function to generate 50 maze and check if they are **nice doable maze** :
+
+```console
+>>> import maze_generator as mg
+>>> mg.test_if_it_work()
+100%|██████████████████████████████████████████████████████████████████████████████████| 50/50 [01:14<00:00,  1.49s/it]
+test pass 46/50
+```
+
+On 50 trail, 46 maze were doable, 4 failed to be properlly generated.
+
+![plot2](https://user-images.githubusercontent.com/12394419/230311239-89a9dac9-1ff7-4b3f-be8e-298ae2ade1ee.png)
+
+The figure above give the 'quality' of the 50 generated maze. We can note 4 mazes that generate only 1 wall. Otherwise the other 46 have a good quality, between 80%-100%.
+
+Conclusion : Out of 50 trials, 4 failed, 4 were poor quality : so 82% efficiency
+
 ### Learning time vs convergence
 during the developement I tryed to optimize some hyper parameters to fasten the leanrning. In the end it is a compromise between optimize the learning time and publish the code.
 
@@ -102,6 +158,5 @@ during the developement I tryed to optimize some hyper parameters to fasten the 
 - `discount = 1` which might be too much... to compensate the weak learning rate
 - the couple `N_episodes=500`, `exploration_decreasing_decay=0.01` seems to alow the convergence in most cases tested
 
-### Charge and timing
+### Estimation of the difficulty of the generated maze
 
--
