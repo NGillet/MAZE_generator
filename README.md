@@ -42,6 +42,8 @@ Wall indicator 114.3%
 ```
 ![plot3](https://user-images.githubusercontent.com/12394419/230314484-f4cc3124-5c36-40bc-83ed-1444edb41108.png)
 
+it takes ~5min
+
 # Algorythm
 This section will describ the algorythm choises made. 
 
