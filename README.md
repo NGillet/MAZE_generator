@@ -32,7 +32,7 @@ Wall indicator 96.7%
 ```
 It should produce the same result as the previous example. Note that you can change the seed number to produce different maze.
 
-## large maze : 15
+## large maze : 15 and 20
 
 ```console
 > python maze_generator.py 15
@@ -43,6 +43,18 @@ Wall indicator 114.3%
 ![plot3](https://user-images.githubusercontent.com/12394419/230314484-f4cc3124-5c36-40bc-83ed-1444edb41108.png)
 
 it takes ~5min
+
+
+```console
+> python maze_generator.py 20
+100%|██████████████████████████████████████████████████████████████████████████████████| 500/500 [34:43<00:00,  4.17s/it]
+Maze doable : True
+Wall indicator 110.3%
+```
+![plot4](https://user-images.githubusercontent.com/12394419/230324132-22f05b03-69de-459e-844b-4901ec89e77c.png)
+
+it takes ~30min
+
 
 # Algorythm
 This section will describ the algorythm choises made. 
