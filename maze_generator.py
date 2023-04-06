@@ -4,6 +4,7 @@ import sys ### to deal with the arguments
 
 import Tree
 import Agent
+
 from tqdm.auto import tqdm ### just for a nice loading bar 
 
 def generate_a_maze( N_grid, N_episodes=500, exploration_decreasing_decay=0.01, seed=1 ):
