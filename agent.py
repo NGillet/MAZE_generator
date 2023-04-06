@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
 from tqdm.auto import tqdm ### just for a nice loading bar 
 
 ### Class to manage the Q-learning
