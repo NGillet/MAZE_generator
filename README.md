@@ -116,10 +116,10 @@ The rewards (1) and (2) are adversarial, by adjusting the value of the reward we
 
 ### Hyper-parameters
 There are other parameters that have to defined : 
-- learning rate : 
-- discount : 
-- exploration/exploitation exponential decay : 
-- number of iteration :
+- learning rate : 0.1
+- discount : 1 
+- exploration/exploitation exponential decay : 0.01
+- number of iteration : 500
 
 # Architecture
  The code is based on 2 main class : 
