@@ -61,9 +61,6 @@ def test_if_it_work(seed=1):
     print(f"test pass {N_checked.sum()}/{N_trial}")
     plt.show()
 
-def main():
-    basic_maze( 4, N_episodes=500, exploration_decreasing_decay=0.01, seed=1 )
-
 if __name__ == "__main__":
     
     N_grid = int(sys.argv[1])
