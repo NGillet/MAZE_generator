@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 ### Class to manage the MAZE grid, cells and walls
 
 ### The grid is represented in math matrix way
-### X (or i) for the columns
-### Y (or j) for the rows /!\ FROM TOP TO BOTTOM
+### X for the columns
+### Y for the rows /!\ FROM TOP TO BOTTOM
 ### ---------------> X
 ### |
 ### |
@@ -147,7 +147,7 @@ class Cell_Tree:
         ### Create the chained list of cells, from top (START) to bottom (!=OUT)
         ### The next cells are the neighbors that are 'bellow'
         
-        ### The construction is recursive, layers after layers
+        ### The construction is recursive, layer after layer
         
         ### NOTE : one cell can be the next of several other cells 
         
@@ -481,7 +481,9 @@ class Cell_Tree:
             return [X+0.5,X+0.5], [Y-0.5,Y+0.5]
 
     def visu( self ):
-        
+        """
+        Plot the actual state of the maze
+        """
         figAndAxes = self.plot_grid( figAndAxes=None )
         self.plot_inoutchest( figAndAxes=figAndAxes )
         self.plot_Walls( figAndAxes=figAndAxes )

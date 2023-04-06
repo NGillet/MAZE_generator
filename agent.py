@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 
 from tqdm.auto import tqdm ### just for a nice loading bar 
 
+### Class to manage the Q-learning
+
 class Agent():
     def __init__(self, tree, N_episodes=500, exploration_decreasing_decay=0.01):  ### tree en input ?
         
@@ -32,6 +34,14 @@ class Agent():
         self.total_QV_episode = np.zeros( self.N_episodes )
                   
     def train(self, from_random=False, verbose=True, disable_tdqm=False):
+        """
+        Training of the Q-value matrix
+        
+        optional input : 
+        from_random=False (bool) : to generate random wall initial condition (for test and dev)
+        verbose=True (bool) : for debug print
+        disable_tdqm=False (bool) : to off the loadbar
+        """
         ### we iterate over episodes
         #for e in range(self.N_episodes): 
         for e in tqdm(range(self.N_episodes), disable=disable_tdqm): 
@@ -84,7 +94,10 @@ class Agent():
             self.total_QV_episode[e] = np.sum(np.abs(self.Q_table))
             
     def generate(self, from_random=False, print_text=False):
-        
+        """
+        Generate a maze based on the Q-value matrix
+        Should be use after training
+        """
         ### we initialize the first state of the episode
         
         self.tree.reset_tree()

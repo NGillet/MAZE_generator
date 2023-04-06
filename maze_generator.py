@@ -7,9 +7,7 @@ import Agent
 
 from tqdm.auto import tqdm ### just for a nice loading bar 
 
-
 def generate_a_maze( N_grid, N_episodes=500, exploration_decreasing_decay=0.01, seed=1 ):
-
     """
     Generate a maze on a grid of size N_grid
     input : 
@@ -29,7 +27,10 @@ def generate_a_maze( N_grid, N_episodes=500, exploration_decreasing_decay=0.01, 
     tree.visu()
     
 def test_if_it_work(seed=1):
-    
+    """
+    Test over 50 trial of N_grid 4
+    - seed=1 (int) : the rng generator seed, fixed during test, should be change to produce different maze
+    """
     np.random.seed(seed)
     N_grid = 4
     N_trial = 50
