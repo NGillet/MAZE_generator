@@ -10,6 +10,15 @@ from tqdm.auto import tqdm ### just for a nice loading bar
 
 def generate_a_maze( N_grid, N_episodes=500, exploration_decreasing_decay=0.01, seed=1 ):
 
+    """
+    Generate a maze on a grid of size N_grid
+    input : 
+    - N_grid (int) : the size of the grid
+    optional input : 
+    - N_episodes=500 (int) : the number of iteration in the training
+    - exploration_decreasing_decay=0.01  (float) : the exponention decay to balance the exploration vs. exploitation during training
+    - seed=1 (int) : the rng generator seed, fixed during test, should be change to produce different maze
+    """
     np.random.seed(seed)
     tree = Tree.Cell_Tree( N_grid )
     agent = Agent.Agent(tree, N_episodes=N_episodes, exploration_decreasing_decay=exploration_decreasing_decay)
@@ -57,6 +66,6 @@ def main():
 if __name__ == "__main__":
     
     N_grid = int(sys.argv[1])
-    print( N_grid )
+    #print( N_grid )
     generate_a_maze( N_grid, N_episodes=500, exploration_decreasing_decay=0.01, seed=1 )
     plt.show()
